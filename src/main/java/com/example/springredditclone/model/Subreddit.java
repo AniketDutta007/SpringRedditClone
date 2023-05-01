@@ -21,7 +21,7 @@ public class Subreddit {
     private Long id;
     private String title;
     private String description;
-    @OneToMany(mappedBy = "subreddit", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "subreddit", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Post> posts;
     private Instant created;
     @ManyToOne(fetch = FetchType.LAZY)
