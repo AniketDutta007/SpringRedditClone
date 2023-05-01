@@ -89,7 +89,7 @@ public class AuthService {
             try {
                 mailService.sendMail(user.getEmail(), 1L, parameters);
             } catch (ApiException e) {
-                System.err.println(e.getMessage());
+                System.err.println(e);
             }
         });
     }
