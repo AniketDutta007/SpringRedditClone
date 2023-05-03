@@ -46,10 +46,11 @@ public class AuthController {
         AuthenticationResponse authenticationResponse = authService.login(loginRequest);
         String refreshToken = authService.generateRefreshToken(loginRequest);
 
+        String url = appConfig.getUrl();
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setDomain(appConfig.getDomain());
         refreshTokenCookie.setPath("/api/auth");
-        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setSecure(url.substring(0, url.indexOf(':')).equals("https"));
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setMaxAge(refreshTokenService.getRefreshTokenExpirationInMillis());
         HttpServletResponse servletResponse = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getResponse();
