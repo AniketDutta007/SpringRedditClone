@@ -18,7 +18,6 @@ public class SendInBlueConfig {
     public void sendinblueClient() {
         ApiClient defaultClient = Configuration.getDefaultApiClient();
         ApiKeyAuth apiKey = (ApiKeyAuth) defaultClient.getAuthentication("api-key");
-        System.out.println(apiKey);
         apiKey.setApiKey(api_key);
     }
 }

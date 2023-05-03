@@ -89,7 +89,6 @@ public class AuthService {
             try {
                 mailService.sendMail(user.getEmail(), 1L, parameters);
             } catch (ApiException e) {
-                System.err.println(e.getStackTrace());
                 System.err.println(e);
             }
         });
@@ -102,6 +101,7 @@ public class AuthService {
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setToken(token);
         verificationToken.setUser(user);
+        verificationToken.setExpiryDate(Instant.now().plusMillis(mailService.getVerificationMailTokenExpirationInMillis()));
 
         verificationTokenRepository.save(verificationToken);
         return token;
