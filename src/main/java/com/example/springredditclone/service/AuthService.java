@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import sendinblue.ApiException;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -55,14 +52,16 @@ public class AuthService {
     @Transactional
     public void signup(RegisterRequest registerRequest) throws UsernameAlreadyExistException, EmailAlreadyExistException {
 
-        Optional<User> tuser = userRepository.findByUsername(registerRequest.getUsername());
+        Optional<User> tuser = userRepository.findActiveUsersByUsername(registerRequest.getUsername());
         if (tuser.isPresent()) {
             throw new UsernameAlreadyExistException();
         }
-        tuser = userRepository.findByEmail(registerRequest.getEmail());
+        tuser = userRepository.findActiveUsersByEmail(registerRequest.getEmail());
         if (tuser.isPresent()) {
             throw new EmailAlreadyExistException();
         }
+
+        deleteInactiveUsers();
 
         Name name = new Name();
         name.setFirstname(registerRequest.getName().getFirstname());
@@ -95,6 +94,14 @@ public class AuthService {
     }
 
     @Transactional
+    public void deleteInactiveUsers() {
+        List<User> users = userRepository.findInactiveUsers();
+        for (User user: users) {
+            userRepository.deleteById(user.getId());
+        }
+    }
+
+    @Transactional
     public String generateVerificationToken(User user) {
         String token = UUID.randomUUID().toString();
 
@@ -108,8 +115,8 @@ public class AuthService {
     }
 
     public void verifyAccount(String token) throws InvalidTokenException, UserNotFoundException, EmailAlreadyVerifiedException {
-        VerificationToken verficationToken = verificationTokenRepository.findByToken(token).orElseThrow(InvalidTokenException::new);
-        fetchUserAndEnable(verficationToken);
+        VerificationToken verificationToken = verificationTokenRepository.findByToken(token).orElseThrow(InvalidTokenException::new);
+        fetchUserAndEnable(verificationToken);
     }
 
     @Transactional
@@ -143,7 +150,7 @@ public class AuthService {
         return refreshTokenService.generateRefreshToken(user).getToken().toString();
     }
 
-    public AuthenticationResponse accessToken(String rtoken) throws InvalidRefreshTokenException {
+    public AuthenticationResponse refreshAccessToken(String rtoken) throws InvalidRefreshTokenException {
         RefreshToken refreshToken = refreshTokenService.validateRefreshToken(rtoken);
         User user = refreshToken.getUser();
         String token = jwtProvider.generateTokenWithUsername(user.getUsername());

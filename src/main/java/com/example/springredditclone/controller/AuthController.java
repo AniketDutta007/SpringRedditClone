@@ -61,7 +61,7 @@ public class AuthController {
 
     @GetMapping(path = "/refresh")
     public ResponseEntity<Object> accessToken(@CookieValue(name = "refresh_token", defaultValue = "") String refreshToken) throws InvalidRefreshTokenException {
-        AuthenticationResponse authenticationResponse = authService.accessToken(refreshToken);
+        AuthenticationResponse authenticationResponse = authService.refreshAccessToken(refreshToken);
         return responseHandler.responseBuilder(true, "Access Token generated successfully", HttpStatus.OK, authenticationResponse);
     }
 

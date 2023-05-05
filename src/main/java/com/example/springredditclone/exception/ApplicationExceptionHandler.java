@@ -74,6 +74,15 @@ public class ApplicationExceptionHandler {
         return errorMap;
     }
 
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(UnauthorizedRequestException.class)
+    public Map<String, String> handleUnauthorizedRequestException(UnauthorizedRequestException exp) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("success", "false");
+        errorMap.put("message", exp.getMessage());
+        return errorMap;
+    }
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidCredentialsException.class)
     public Map<String, String> handleInvalidCredentialsException(InvalidCredentialsException exp) {

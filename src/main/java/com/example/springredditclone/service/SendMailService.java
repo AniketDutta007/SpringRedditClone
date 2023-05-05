@@ -63,6 +63,7 @@ public class SendMailService {
     }
 
     public Long getVerificationMailTokenExpirationInMillis() {
+        System.out.println(verificationMailTokenExpirationInMillis);
         return verificationMailTokenExpirationInMillis;
     }
 }

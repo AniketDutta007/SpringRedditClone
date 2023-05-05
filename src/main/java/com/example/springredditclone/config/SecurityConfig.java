@@ -1,5 +1,7 @@
 package com.example.springredditclone.config;
 
+import com.example.springredditclone.exception.CustomAccessDeniedHandler;
+import com.example.springredditclone.exception.UnauthorizedRequestException;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -60,9 +62,8 @@ public class SecurityConfig {
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions->exceptions
                         .authenticationEntryPoint(new BasicAuthenticationEntryPoint())
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+                        .accessDeniedHandler(new CustomAccessDeniedHandler())
                 );
-
         return httpSecurity.build();
     }
 
